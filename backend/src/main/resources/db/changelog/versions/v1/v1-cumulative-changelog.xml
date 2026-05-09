@@ -1,0 +1,9 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <include file="2026-04-25-create-main-tables.xml" relativeToChangelogFile="true"/>
+    <include file="2026-05-05-add-test-tasks.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

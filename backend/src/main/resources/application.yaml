@@ -1,0 +1,55 @@
+quarkus:
+  http:
+    root-path: /api
+    cors:
+      origins: "*"
+      methods: "GET,POST,PUT,DELETE,OPTIONS"
+      headers: "*"
+      access-control-allow-credentials: true
+      enabled: true
+
+  datasource:
+    username: postgres
+    password: 1234
+    db-kind: postgresql
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/trainer_db
+
+  hibernate-orm:
+    sql-load-script:
+    database:
+      default-schema: public
+      schema-management:
+        strategy: none
+      generation: update
+    log:
+      sql: true
+      format-sql: true
+  liquibase:
+    default-schema-name: public
+    migrate-at-start: true
+    change-log: db/changelog/db.changelog-master.xml
+
+  smallrye-openapi:
+    auto-add-security: false
+
+  swagger-ui:
+    always-include: true  
+
+smallrye:
+  jwt:
+    sign:
+      key:
+        location: privateKey.pem
+    encrypt:
+      key:
+        location: publicKey.pem
+    verify:
+      key:
+        location: publicKey.pem
+mp:
+  jwt:
+    verify:
+      key:
+        location: publicKey.pem
+      issuer: trainer-app
