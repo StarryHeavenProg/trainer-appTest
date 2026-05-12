@@ -1,0 +1,34 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1-add-trainers" author="astarell">
+        <sql>
+            INSERT INTO trainers (id, name, created_by) VALUES
+                ('bcc6f453-e4e4-49fc-b1e3-ca687d3f20a6', 'SQL trainer #1', '00000000-0000-0000-0000-000000000001'),
+                ('34f097a9-1542-4a43-8b30-bef905d4f925', 'Test trainer #2', '00000000-0000-0000-0000-000000000001'),
+                ('8d3d4a57-c179-4f34-afc5-6a4e272fc26b', 'Business analyses trainer #3', '00000000-0000-0000-0000-000000000001');
+        </sql>
+    </changeSet>
+
+    <changeSet id="2-add-task-trainer-links" author="astarell">
+        <sql>
+            INSERT INTO tasks_trainers (id, task_id, trainer_id) VALUES
+                <!--SQL trainer #1-->
+                ('3d6f1126-f509-4538-88e1-239028c15240', '8140dc03-762c-45c9-9bf7-e822f514ca43', 'bcc6f453-e4e4-49fc-b1e3-ca687d3f20a6'),
+                ('b909734f-aa42-447d-9f46-4e498efe8996', 'cdb2e661-0875-4051-8770-6aeffaa40b1e', 'bcc6f453-e4e4-49fc-b1e3-ca687d3f20a6'),
+                ('b19353aa-e472-48d3-85fd-68dd88a9aec8', 'fa74c630-97b4-40ed-a74f-8ee885573b33', 'bcc6f453-e4e4-49fc-b1e3-ca687d3f20a6'),
+                ('966821a8-fe49-4481-ab21-5c57b102fa04', '9bf433c6-301b-4458-8be7-aea348f64b44', 'bcc6f453-e4e4-49fc-b1e3-ca687d3f20a6'),
+                <!--Test trainer #2-->
+                ('938545ca-0e7a-4cbf-a14d-d31746826ad2', '9bf433c6-301b-4458-8be7-aea348f64b44', '34f097a9-1542-4a43-8b30-bef905d4f925'),
+                ('af2ada58-0da0-4992-8956-1503d8250a8c', '8a485519-b6f1-4dcc-a838-11e779884509', '34f097a9-1542-4a43-8b30-bef905d4f925'),
+                ('06d21b1e-1f9e-4444-afc2-205cf1fb4ed9', '0e3b6d5d-15a4-4d17-a844-a5c8091f2afb', '34f097a9-1542-4a43-8b30-bef905d4f925'),
+                <!--Business analyses trainer #3-->
+                ('27168f8a-074c-4806-9a77-93c9c21f4902', 'b5b2633f-b578-4d79-a542-a4838a73a0f9', '8d3d4a57-c179-4f34-afc5-6a4e272fc26b'),
+                ('7e7472c7-aec9-4115-845f-6cb8c07beb49', 'afcb1a69-7765-4e6d-8e4a-adfd8dd96921', '8d3d4a57-c179-4f34-afc5-6a4e272fc26b'),
+                ('7239c9e1-0273-4deb-89dc-0021eee43aac', '4eb369fe-a7c6-468f-854d-d9ec7dc59f55', '8d3d4a57-c179-4f34-afc5-6a4e272fc26b');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

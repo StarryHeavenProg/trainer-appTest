@@ -21,7 +21,7 @@ quarkus:
       default-schema: public
       schema-management:
         strategy: none
-      generation: update
+      generation: none
     log:
       sql: true
       format-sql: true

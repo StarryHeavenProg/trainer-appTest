@@ -5,5 +5,6 @@
 
     <include file="2026-04-25-create-main-tables.xml" relativeToChangelogFile="true"/>
     <include file="2026-05-05-add-test-tasks.xml" relativeToChangelogFile="true"/>
+    <include file="2026-05-10-add-test-trainers.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

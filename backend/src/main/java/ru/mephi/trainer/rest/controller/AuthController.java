@@ -6,11 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestResponse;
 import ru.mephi.trainer.entity.UserEntity;
 import ru.mephi.trainer.rest.api.AuthApi;
-import ru.mephi.trainer.rest.dto.request.LoginRequest;
-import ru.mephi.trainer.rest.dto.request.RegistrationRequest;
-import ru.mephi.trainer.rest.dto.response.LoginResponse;
-import ru.mephi.trainer.rest.dto.response.RegistrationResponse;
+import ru.mephi.trainer.rest.dto.request.auth.LoginRequest;
+import ru.mephi.trainer.rest.dto.request.auth.RegistrationRequest;
+import ru.mephi.trainer.rest.dto.response.auth.LoginResponse;
+import ru.mephi.trainer.rest.dto.response.auth.RegistrationResponse;
 import ru.mephi.trainer.service.AuthService;
+import ru.mephi.trainer.util.SecurityUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,12 +22,10 @@ public class AuthController implements AuthApi {
     @Override
     @PermitAll
     public RestResponse<RegistrationResponse> registerUser(RegistrationRequest registrationRequest) {
-        log.info("Registering user with email: {}", registrationRequest.getEmail());
+        log.info("Registering user");
 
         UserEntity registeredUser = authService.register(registrationRequest);
         String token = authService.generateToken(registeredUser);
-
-        log.info("User registered successfully: {}", registeredUser.getEmail());
 
         return RestResponse.status(RestResponse.Status.CREATED, RegistrationResponse.builder()
                 .message("Вы успешно зарегистрированы")
@@ -37,17 +36,15 @@ public class AuthController implements AuthApi {
     @Override
     @PermitAll
     public RestResponse<LoginResponse> loginUser(LoginRequest loginRequest) {
-        log.info("Login attempt for email: {}", loginRequest.getEmail());
+        log.info("Login attempt");
 
         UserEntity authenticatedUser = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
         String token = authService.generateToken(authenticatedUser);
 
-        log.info("User logged in successfully: {}", authenticatedUser.getEmail());
-
         return RestResponse.ok(LoginResponse.builder()
                 .token(token)
                 .email(authenticatedUser.getEmail())
-                .role(authenticatedUser.getUserRole().getSecurityRole())
+                .role(SecurityUtil.toSecurityRole(authenticatedUser.getUserRole()))
                 .build());
     }
 }

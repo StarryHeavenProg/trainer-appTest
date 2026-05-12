@@ -6,7 +6,7 @@
     <changeSet id="1-main_enums" author="astarell">
         <sql>
             CREATE TYPE user_roles AS ENUM ('APP_USER', 'APP_EXPERT', 'APP_ADMIN');
-            CREATE TYPE task_types AS ENUM ('SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'ERROR_FINDING', 'OPEN_ANSWER', 'SQL_QUERY');
+            CREATE TYPE task_types AS ENUM ('SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'ERROR_FINDING', 'OPEN_ANSWER');
             CREATE TYPE task_attempts_status AS ENUM ('REVIEW', 'COMPLETED', 'FAILED');
         </sql>
     </changeSet>
@@ -68,7 +68,7 @@
                 task_id UUID NOT NULL,
                 user_id UUID NOT NULL,
                 user_answer JSONB NOT NULL,
-                points DECIMAL,
+                points INTEGER,
                 status task_attempts_status NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 FOREIGN KEY (task_id) REFERENCES tasks_trainers (id) ON DELETE CASCADE,

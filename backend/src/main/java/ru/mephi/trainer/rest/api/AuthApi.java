@@ -9,15 +9,16 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
-import ru.mephi.trainer.rest.dto.request.LoginRequest;
-import ru.mephi.trainer.rest.dto.request.RegistrationRequest;
+import ru.mephi.trainer.rest.dto.request.auth.LoginRequest;
+import ru.mephi.trainer.rest.dto.request.auth.RegistrationRequest;
 import ru.mephi.trainer.rest.dto.response.ErrorResponse;
-import ru.mephi.trainer.rest.dto.response.LoginResponse;
-import ru.mephi.trainer.rest.dto.response.RegistrationResponse;
+import ru.mephi.trainer.rest.dto.response.auth.LoginResponse;
+import ru.mephi.trainer.rest.dto.response.auth.RegistrationResponse;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,7 +55,7 @@ public interface AuthApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    RestResponse<RegistrationResponse> registerUser(@Valid RegistrationRequest registrationRequest);
+    RestResponse<RegistrationResponse> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest);
 
     @POST
     @Path("/login")
@@ -85,5 +86,5 @@ public interface AuthApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    RestResponse<LoginResponse> loginUser(@Valid LoginRequest loginRequest);
+    RestResponse<LoginResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest);
 }

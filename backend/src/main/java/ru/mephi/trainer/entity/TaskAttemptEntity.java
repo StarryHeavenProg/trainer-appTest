@@ -29,7 +29,7 @@ public class TaskAttemptEntity {
     private String userAnswer;
 
     @Column(name = "points")
-    private Double points;
+    private Integer points;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
