@@ -9,11 +9,10 @@ quarkus:
       enabled: true
 
   datasource:
-    username: postgres
-    password: 1234
+    username: quarkus
+    password: quarkus
+
     db-kind: postgresql
-    jdbc:
-      url: jdbc:postgresql://localhost:5432/trainer_db
 
   hibernate-orm:
     sql-load-script:
