@@ -17,5 +17,5 @@ public class ErrorResponse {
     @Builder.Default
     private final Instant timestamp = Instant.now();
     private String message;
-    private Set<ErrorDetails> details;
+    private Set<String> errors;
 }

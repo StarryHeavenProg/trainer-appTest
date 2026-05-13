@@ -1,4 +1,4 @@
-package ru.mephi.trainer.rest.dto.response.task.user;
+package ru.mephi.trainer.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskInfoResponse {
+public class TrainerPercentProgress {
     private UUID id;
-    private String title;
-    private String type;
+    private String name;
+    private Double progressPercent;
 }

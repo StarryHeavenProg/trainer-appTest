@@ -9,12 +9,13 @@ import ru.mephi.trainer.entity.TaskEntity;
 import ru.mephi.trainer.entity.TaskTrainerEntity;
 import ru.mephi.trainer.entity.TrainerEntity;
 import ru.mephi.trainer.exception.EntityNotFoundException;
+import ru.mephi.trainer.exception.InvalidCommandDataException;
 import ru.mephi.trainer.models.command.SaveTaskCommand;
 import ru.mephi.trainer.models.taskconfig.TaskConfig;
-import ru.mephi.trainer.repository.TaskAttemptRepository;
 import ru.mephi.trainer.repository.TaskRepository;
 import ru.mephi.trainer.repository.TrainerRepository;
 import ru.mephi.trainer.rest.dto.response.task.user.TaskResponse;
+import ru.mephi.trainer.service.taskconfig.TaskConfigValidator;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -30,8 +31,24 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TrainerRepository trainerRepository;
-    private final TaskAttemptRepository taskAttemptRepository;
+    private final TaskConfigValidator taskConfigValidator;
     private final ObjectMapper objectMapper;
+
+    public TaskEntity getTask(UUID taskId) {
+        return taskRepository.findByIdOptional(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Задача не найдена: " + taskId));
+    }
+
+    public TaskResponse getTaskWithAttempt(UUID userId, UUID trainerId, UUID taskId) {
+        log.info("Get task with user attempt: userId={}, trainerId={}, taskId={}", userId, trainerId, taskId);
+        return taskRepository.getTaskWithUserAttempt(userId, trainerId, taskId)
+                .orElseThrow(() -> {
+                    log.warn("Task not found: taskId={}, trainerId={}", taskId, trainerId);
+                    return new EntityNotFoundException(
+                            "Задача не найдена в этом тренажёре. taskId: " + taskId + " trainerId: " + trainerId
+                    );
+                });
+    }
 
     @Transactional
     public TaskEntity createTask(SaveTaskCommand command, UUID createdBy) {
@@ -145,21 +162,10 @@ public class TaskService {
     }
 
     private void validateConfig(TaskConfig config) {
-        // TODO
-    }
+        Set<String> errors = taskConfigValidator.validateConfig(config);
 
-
-    
-    public TaskResponse getTaskWithAttempt(UUID userId, UUID trainerId, UUID taskId) {
-        log.info("Get task with user attempt: userId={}, trainerId={}, taskId={}", userId, trainerId, taskId);
-        TaskResponse taskResponse = taskRepository.getTaskWithUserAttempt(userId, trainerId, taskId).orElseThrow(() -> {
-            log.warn("Task not found: taskId={}, trainerId={}", taskId, trainerId);
-            return new EntityNotFoundException("Задача не найдена в этом тренажёре");
-        });
-        int countAttempts = taskAttemptRepository.getAttemptsCountByTaskAndTrainer(taskId, trainerId, userId);
-        taskResponse.setUserAttempts(countAttempts);
-
-        log.info("Task retrieved successfully: {}", taskResponse.getId());
-        return taskResponse;
+        if (!errors.isEmpty()) {
+            throw new InvalidCommandDataException(errors);
+        }
     }
 }

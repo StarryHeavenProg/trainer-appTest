@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -18,5 +18,5 @@ public class ReviewTaskResponse {
     private String trainerName;
     private String studentName;
     private String studentEmail;
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 }

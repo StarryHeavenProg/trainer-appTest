@@ -6,7 +6,7 @@ import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import ru.mephi.trainer.entity.enums.TaskType;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class TaskUserResponse {
 
     @Schema(description = "Дата создания")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 
     @Schema(description = "Список ID тренажёров")
     private Set<UUID> trainerIds;

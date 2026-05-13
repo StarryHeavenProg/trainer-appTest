@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,6 +18,11 @@ public class MessageResponse {
     @Schema(description = "Сообщение", examples = "Операция выполнена успешно")
     private String message;
 
+    @Builder.Default
     @Schema(description = "Временная метка", examples = "2024-01-15T10:30:00Z")
-    private String timestamp;
+    private Instant timestamp = Instant.now();
+
+    public static MessageResponse withMessage(String message) {
+        return new MessageResponse(message, Instant.now());
+    }
 }

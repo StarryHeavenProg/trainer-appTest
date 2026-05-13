@@ -61,7 +61,8 @@ public class TrainerProgressRepository {
                     SELECT
                         t.id,
                         t.config->>'question' as name,
-                        COALESCE(ta.points, 0) as point
+                        COALESCE(ta.points, 0) as point,
+                        CAST(t.config->>'points' AS INTEGER) as max_point
                     FROM tasks t
                     JOIN tasks_trainers tt ON tt.task_id = t.id
                     LEFT JOIN task_attempts ta ON ta.task_id = tt.id AND ta.user_id = ?1 AND ta.status = 'COMPLETED'
@@ -80,6 +81,7 @@ public class TrainerProgressRepository {
                     dto.setId((UUID) row[0]);
                     dto.setName((String) row[1]);
                     dto.setPoint(((Number) row[2]).intValue());
+                    dto.setMaxPoint(((Number) row[3]).intValue());
                     return dto;
                 })
                 .toList();

@@ -1,20 +1,17 @@
 package ru.mephi.trainer.service;
 
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.mephi.trainer.entity.TaskAttemptEntity;
 import ru.mephi.trainer.entity.enums.AttemptStatus;
 import ru.mephi.trainer.exception.EntityNotFoundException;
+import ru.mephi.trainer.exception.StatusTaskNotReviewException;
 import ru.mephi.trainer.repository.TaskAttemptRepository;
 import ru.mephi.trainer.rest.dto.response.task.expert.AnswerTaskResponse;
-import ru.mephi.trainer.rest.dto.response.MessageResponse;
 import ru.mephi.trainer.rest.dto.response.task.expert.ReviewTaskResponse;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +19,7 @@ import java.util.UUID;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class ExpertService {
+
     private final TaskAttemptRepository taskAttemptRepository;
 
     public List<ReviewTaskResponse> getReviewTask() {
@@ -39,7 +37,7 @@ public class ExpertService {
     }
 
     @Transactional
-    public MessageResponse setPointsForTask(UUID taskAttemptId, Boolean isCorrect) {
+    public int setPointsForTask(UUID taskAttemptId, Boolean isCorrect) {
         log.info("Setting points for attempt: {} with points: {}", taskAttemptId, isCorrect);
         TaskAttemptEntity taskAttempt = taskAttemptRepository.findByIdOptional(taskAttemptId)
                 .orElseThrow(() -> {
@@ -48,7 +46,7 @@ public class ExpertService {
                 });
         if (taskAttempt.getStatus() != AttemptStatus.REVIEW) {
             log.warn("Get task for review info failed - task not in review: id={}", taskAttemptId);
-            throw new BadRequestException("Работа не на проверке");
+            throw new StatusTaskNotReviewException("Работа не на проверке");
         }
 
         int points = 0;
@@ -66,14 +64,12 @@ public class ExpertService {
             if (attemptsCount > 1) {
                 points -= mistakeCost * (attemptsCount - 1);
             }
+            points = Math.max(0, points);
             taskAttempt.setPoints(points);
             taskAttempt.setStatus(AttemptStatus.COMPLETED);
         }
 
         taskAttemptRepository.persist(taskAttempt);
-        return MessageResponse.builder()
-                .message("Работа оценена. Поставлено баллов: " + points)
-                .timestamp(Instant.now().toString())
-                .build();
+        return points;
     }
 }

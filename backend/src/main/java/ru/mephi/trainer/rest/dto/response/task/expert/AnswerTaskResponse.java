@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.mephi.trainer.entity.enums.AttemptStatus;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -20,6 +21,7 @@ public class AnswerTaskResponse {
     private String studentEmail;
     private String answer;
     private Integer points;
+    private AttemptStatus status;
     private Integer maxPoints;
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 }

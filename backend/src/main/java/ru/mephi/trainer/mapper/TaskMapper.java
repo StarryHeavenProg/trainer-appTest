@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskMapper {
 
-    // TODO MapStruct?
-
     private final ObjectMapper objectMapper;
 
     public SaveTaskCommand toCommand(SaveTaskRequest request) {

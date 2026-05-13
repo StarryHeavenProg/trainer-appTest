@@ -2,23 +2,19 @@ package ru.mephi.trainer.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 import ru.mephi.trainer.entity.TaskAttemptEntity;
+import ru.mephi.trainer.entity.enums.AttemptStatus;
 import ru.mephi.trainer.rest.dto.response.task.expert.AnswerTaskResponse;
 import ru.mephi.trainer.rest.dto.response.task.expert.ReviewTaskResponse;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
 public class TaskAttemptRepository implements PanacheRepositoryBase<TaskAttemptEntity, UUID> {
-
-    @PersistenceContext
-    private EntityManager em;
 
     public List<ReviewTaskResponse> getReviewTasksWithDetails() {
         String sql = """
@@ -49,7 +45,7 @@ public class TaskAttemptRepository implements PanacheRepositoryBase<TaskAttemptE
                         .trainerName((String) row[2])
                         .studentName((String) row[3])
                         .studentEmail((String) row[4])
-                        .createdAt((OffsetDateTime) row[5])
+                        .createdAt((Instant) row[5])
                         .build())
                 .toList();
     }
@@ -65,7 +61,8 @@ public class TaskAttemptRepository implements PanacheRepositoryBase<TaskAttemptE
                         ta.user_answer as answer,
                         ta.points as points,
                         CAST(t.config->>'points' AS INTEGER) as max_points,
-                        ta.created_at
+                        ta.created_at,
+                        ta.status as status
                     FROM task_attempts ta
                     JOIN tasks_trainers tt ON tt.id = ta.task_id
                     JOIN tasks t ON t.id = tt.task_id
@@ -74,7 +71,7 @@ public class TaskAttemptRepository implements PanacheRepositoryBase<TaskAttemptE
                     WHERE ta.id = ?1
                 """;
         try {
-            Object[] result = (Object[]) em.createNativeQuery(sql)
+            Object[] result = (Object[]) getEntityManager().createNativeQuery(sql)
                     .setParameter(1, id)
                     .getSingleResult();
 
@@ -87,7 +84,8 @@ public class TaskAttemptRepository implements PanacheRepositoryBase<TaskAttemptE
                     .answer((String) result[5])
                     .points((Integer) result[6])
                     .maxPoints((Integer) result[7])
-                    .createdAt((OffsetDateTime) result[8])
+                    .createdAt((Instant) result[8])
+                    .status(AttemptStatus.valueOf((String) result[9]))
                     .build());
         }
         catch (NoResultException e) {

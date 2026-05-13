@@ -13,7 +13,7 @@ import ru.mephi.trainer.rest.dto.response.task.admin.config.OpenAnswerConfigDto;
 import ru.mephi.trainer.rest.dto.response.task.admin.config.SingleChoiceConfigDto;
 import ru.mephi.trainer.rest.dto.response.task.admin.config.TaskConfigDto;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,7 +44,7 @@ public class TaskAdminResponse {
 
     @Schema(description = "Дата создания", examples = "2024-01-15T10:30:00+03:00")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 
     @Schema(description = "Список ID тренажёров, к которым привязано задание",
             examples = "[\"550e8400-e29b-41d4-a716-446655440001\"]")

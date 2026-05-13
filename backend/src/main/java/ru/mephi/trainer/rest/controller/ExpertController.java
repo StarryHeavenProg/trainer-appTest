@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@RequiredArgsConstructor
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ExpertController implements ExpertApi {
+
     private final ExpertService expertService;
 
     @Override
@@ -41,7 +42,10 @@ public class ExpertController implements ExpertApi {
     @RolesAllowed({"expert"})
     public RestResponse<MessageResponse> setPointForTask(UUID taskAttemptId, SubmitReviewRequest request) {
         log.info("Expert endpoint set task point accessed: id={}, correct={}", taskAttemptId, request.getIsCorrect());
-        MessageResponse response = expertService.setPointsForTask(taskAttemptId, request.getIsCorrect());
+        int points = expertService.setPointsForTask(taskAttemptId, request.getIsCorrect());
+
+        MessageResponse response = MessageResponse.withMessage("Работа оценена. Поставлено баллов: " + points);
+
         return RestResponse.ok(response);
     }
 }

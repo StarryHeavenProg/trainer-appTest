@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -16,6 +16,6 @@ import java.util.UUID;
 public class TrainerResponse {
     private UUID id;
     private String name;
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
     private UUID createdBy;
 }

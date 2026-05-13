@@ -1,7 +1,6 @@
 package ru.mephi.trainer.rest.controller;
 
 import io.quarkus.security.Authenticated;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Response;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestResponse;
 import ru.mephi.trainer.entity.TrainerEntity;
+import ru.mephi.trainer.models.attempt.SubmissionCheckResult;
 import ru.mephi.trainer.models.command.SaveTrainerCommand;
 import ru.mephi.trainer.rest.api.TrainersAPI;
 import ru.mephi.trainer.rest.dto.request.AnswerRequest;
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@RequiredArgsConstructor
 @ApplicationScoped
+@RequiredArgsConstructor
 public class TrainersController implements TrainersAPI {
 
     private final TrainerService trainerService;
@@ -36,7 +36,7 @@ public class TrainersController implements TrainersAPI {
     private final TaskService taskService;
 
     @Override
-    @PermitAll
+    @Authenticated
     public RestResponse<List<TrainerResponse>> getTrainers() {
         log.info("Get all trainer");
         List<TrainerResponse> response = trainerService.getAllTrainers().stream()
@@ -51,10 +51,11 @@ public class TrainersController implements TrainersAPI {
     }
 
     @Override
-    @PermitAll
+    @Authenticated
     public RestResponse<TrainerInfoResponse> getTrainerInfo(UUID trainerId) {
-        log.info("Get trainer: id={}", trainerId);
-        TrainerInfoResponse trainerInfoResponse = trainerService.getTrainerInfo(trainerId);
+        UUID userId = currentUserService.getCurrentUserIdOrThrow();
+        log.info("Get trainer: user={}, id={}", userId, trainerId);
+        TrainerInfoResponse trainerInfoResponse = trainerService.getTrainerInfo(userId, trainerId);
         return RestResponse.ok(trainerInfoResponse);
     }
 
@@ -90,11 +91,12 @@ public class TrainersController implements TrainersAPI {
 
     @Override
     @Authenticated
-    public RestResponse<MessageResponse> insertTaskAttempt(UUID trainerId, UUID taskId, AnswerRequest request) {
+    public RestResponse<MessageResponse> submitTaskAttempt(UUID trainerId, UUID taskId, AnswerRequest request) {
         UUID userId = currentUserService.getCurrentUserIdOrThrow();
-        log.info("Insert task attempt: userId={}, trainerId={}, taskId={}", userId, trainerId, taskId);
-        MessageResponse response = taskAttemptService.insertTaskAttempt(userId, trainerId, taskId,
+        log.info("Submit task attempt: userId={}, trainerId={}, taskId={}", userId, trainerId, taskId);
+        SubmissionCheckResult checkResult = taskAttemptService.submitTaskAttempt(userId, trainerId, taskId,
                 request.getUserAnswer());
-        return RestResponse.ok(response);
+
+        return RestResponse.ok(MessageResponse.withMessage(checkResult.getMessage()));
     }
 }
